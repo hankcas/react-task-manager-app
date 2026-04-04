@@ -1,30 +1,51 @@
-import React, { useState, useEffect } from 'react';
-import CharacterCard from "./components/CharacterCard";
+import React, { useState, useEffect } from "react";
+import "./App.css";
 
 function App() {
-  const [name, setName] = useState("");
-  const [image, setImage] = useState("");
-  const [genre, setGenre] = useState("");
-  const [status, setStatus] = useState("");
-
-  const rickAndMortyCharacterId = 1; // Cambia este ID para probar con otros personajes
+  const [characters, setCharacters] = useState([]);
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
-    fetch(`https://rickandmortyapi.com/api/character/${rickAndMortyCharacterId}`)
-      .then((response) => response.json())
-      .then((result) => {
-        setName(result.name);
-        setImage(result.image);
-        setGenre(result.gender); // Corregí 'genre' a 'gender' ya que la API usa este término
-        setStatus(result.status);
-      })
-      .catch((error) => console.error('Error fetching character:', error));
+    fetch("https://rickandmortyapi.com/api/character")
+      .then(res => res.json())
+      .then(data => setCharacters(data.results))
+      .catch(err => console.error(err));
   }, []);
 
   return (
     <div>
       <h1>Personajes de Rick and Morty</h1>
-      <CharacterCard name={name} image={image} genre={genre} status={status} />
+      <input
+  type="text"
+  placeholder="Buscar personaje..."
+  value={search}
+  onChange={(e) => setSearch(e.target.value)}
+  style={{ padding: "10px", marginBottom: "20px" }}
+/>
+
+      <div className="container">
+        {characters
+  .filter((char) =>
+    char.name.toLowerCase().includes(search.toLowerCase())
+  )
+  .map((char) => (
+          <div
+            key={char.id}
+            style={{
+              background: "white",
+              color: "black",
+              padding: "10px",
+              borderRadius: "10px",
+              width: "200px"
+            }}
+          >
+            <h3>{char.name}</h3>
+            <img src={char.image} width="100%" />
+            <p>{char.gender}</p>
+            <p>{char.status}</p>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
