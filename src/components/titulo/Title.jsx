@@ -1,5 +1,5 @@
 import React from 'react';
-import './Title.css';
+import './temp.css';
 function Title({ title }) {
   if (!title) return <p>Cargando título...</p>;
 
