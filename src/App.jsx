@@ -1,51 +1,99 @@
-import React, { useState, useEffect } from "react";
+import { useState } from "react";
+import CharacterCard from "./components/CharacterCard/CharacterCard";
+import Filters from "./components/Filters/Filters";
+import Pagination from "./components/Pagination/Pagination";
+import { useCharacters } from "./hooks/useCharacters";
+import { useDebounce } from "./hooks/useDebounce";
 import "./App.css";
 
 function App() {
-  const [characters, setCharacters] = useState([]);
   const [search, setSearch] = useState("");
+  const [status, setStatus] = useState("");
+  const [gender, setGender] = useState("");
+  const [page, setPage] = useState(1);
 
-  useEffect(() => {
-    fetch("https://rickandmortyapi.com/api/character")
-      .then(res => res.json())
-      .then(data => setCharacters(data.results))
-      .catch(err => console.error(err));
-  }, []);
+  const debouncedSearch = useDebounce(search);
+  const { characters, info, loading, error } = useCharacters({
+    name: debouncedSearch,
+    status,
+    gender,
+    page,
+  });
+
+  // Cualquier cambio de filtro vuelve a la página 1
+  const withReset = (setter) => (value) => {
+    setter(value);
+    setPage(1);
+  };
+
+  const resetFilters = () => {
+    setSearch("");
+    setStatus("");
+    setGender("");
+    setPage(1);
+  };
+
+  const changePage = (next) => {
+    setPage(next);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   return (
-    <div>
-      <h1>Personajes de Rick and Morty</h1>
-      <input
-  type="text"
-  placeholder="Buscar personaje..."
-  value={search}
-  onChange={(e) => setSearch(e.target.value)}
-  style={{ padding: "10px", marginBottom: "20px" }}
-/>
+    <div className="app">
+      <header className="header">
+        <h1 className="title">
+          Rick <span>&</span> Morty Explorer
+        </h1>
+        <p className="subtitle">
+          Explora los personajes de la serie usando la API pública de Rick and Morty.
+        </p>
+      </header>
 
-      <div className="container">
-        {characters
-  .filter((char) =>
-    char.name.toLowerCase().includes(search.toLowerCase())
-  )
-  .map((char) => (
-          <div
-            key={char.id}
-            style={{
-              background: "white",
-              color: "black",
-              padding: "10px",
-              borderRadius: "10px",
-              width: "200px"
-            }}
-          >
-            <h3>{char.name}</h3>
-            <img src={char.image} width="100%" />
-            <p>{char.gender}</p>
-            <p>{char.status}</p>
+      <Filters
+        search={search}
+        status={status}
+        gender={gender}
+        onSearch={withReset(setSearch)}
+        onStatus={withReset(setStatus)}
+        onGender={withReset(setGender)}
+        onReset={resetFilters}
+      />
+
+      <main>
+        {!loading && !error && (
+          <p className="count">{info.count} personajes encontrados</p>
+        )}
+
+        {error && <p className="message error">{error}</p>}
+
+        {loading && (
+          <div className="grid" aria-busy="true">
+            {Array.from({ length: 8 }, (_, i) => (
+              <div key={i} className="skeleton" />
+            ))}
           </div>
-        ))}
-      </div>
+        )}
+
+        {!loading && !error && characters.length === 0 && (
+          <p className="message">No hay personajes que coincidan con tu búsqueda.</p>
+        )}
+
+        {!loading && !error && characters.length > 0 && (
+          <div className="grid">
+            {characters.map((character) => (
+              <CharacterCard key={character.id} character={character} />
+            ))}
+          </div>
+        )}
+
+        {!error && <Pagination page={page} pages={info.pages} onChange={changePage} />}
+      </main>
+
+      <footer className="footer">
+        Datos de <a href="https://rickandmortyapi.com" target="_blank" rel="noreferrer">rickandmortyapi.com</a>
+        {" · "}Hecho por{" "}
+        <a href="https://github.com/hankcas" target="_blank" rel="noreferrer">Leonardo Castro</a>
+      </footer>
     </div>
   );
 }

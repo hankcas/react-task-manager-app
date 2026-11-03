@@ -1,47 +1,81 @@
-body {
-  margin: 0;
-  background-color: #121212;
-  color: white;
-  font-family: Arial, sans-serif;
-}
-
-h1 {
-  text-align: center;
-  margin: 20px 0;
-}
-
-input {
-  display: block;
-  margin: 0 auto 20px auto;
-  padding: 10px;
-  border-radius: 8px;
-  border: none;
-  width: 250px;
-  font-size: 16px;
-}
-
-.container {
+.app {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 16px 24px;
   display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-  justify-content: center;   /* 🔥 esto centra */
-  padding: 20px;
+  flex-direction: column;
+  gap: 28px;
 }
 
-.card {
-  background: #1e1e1e;
-  border-radius: 12px;
-  padding: 15px;
-  width: 200px;
-  transition: transform 0.2s ease;
+.header {
   text-align: center;
 }
 
-.card:hover {
-  transform: scale(1.05);
+.title {
+  margin: 0;
+  font-size: clamp(2rem, 5vw, 3.2rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--text);
 }
 
-.card img {
-  border-radius: 8px;
-  width: 100%;
+.title span {
+  color: var(--accent);
+  text-shadow: 0 0 18px var(--accent-glow);
+}
+
+.subtitle {
+  margin: 8px 0 0;
+  color: var(--muted);
+}
+
+.count {
+  margin: 0 0 16px;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+.skeleton {
+  aspect-ratio: 0.72;
+  border-radius: 16px;
+  background: linear-gradient(90deg, var(--surface) 25%, var(--border) 50%, var(--surface) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.2s infinite;
+}
+
+@keyframes shimmer {
+  to { background-position: -200% 0; }
+}
+
+.message {
+  text-align: center;
+  padding: 48px 0;
+  color: var(--muted);
+}
+
+.message.error {
+  color: #e5484d;
+}
+
+.footer {
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--muted);
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
+.footer a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.footer a:hover {
+  text-decoration: underline;
 }
