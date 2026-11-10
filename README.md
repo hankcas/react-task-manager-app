@@ -51,3 +51,5 @@ npm run preview
 
 **Leonardo Castro** — Ingeniero Mecatrónico y desarrollador Full Stack
 [GitHub](https://github.com/hankcas)
+
+Desarrollado con apoyo de Claude (Anthropic) como asistente de programación.
